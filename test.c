@@ -122,7 +122,7 @@ static inline void init() {
         setenv("https_proxy", args_info.proxy_arg, 1);
     }
 
-    static const char *resolvers[2] = {"1.1.1.1", "1.0.0.1"};
+    static const char *resolvers[2] = {"1.1.1.1", "119.29.29.29"};
     _resolv_set_nameservers_for_net(0, resolvers, 2, ".");
 #ifndef MyRelease
     subhook_install(subhook_new(
