@@ -444,11 +444,16 @@ const char* get_m3u8_method_play(uint8_t leaseMgr[16], unsigned long adam) {
         struct shared_ptr *playbackAsset = _ZNK23SVPlaybackAssetResponse13playbackAssetEv(ptr_result->obj);
         union std_string *m3u8 = (union std_string *) malloc(24);
         _ZNK17storeservicescore13PlaybackAsset9URLStringEv(m3u8, playbackAsset->obj);
-        return std_string_data(m3u8);
+        const char *result = std_string_data(m3u8);
+        free(ptr_result);  // 释放 ptr_result
+        free(m3u8);  // 释放 m3u8
+        return result;
     } else {
+        free(ptr_result);  // 释放 ptr_result
         return NULL;
     }
 }
+
 
 void handle_m3u8(const int connfd) {
     while (1)
