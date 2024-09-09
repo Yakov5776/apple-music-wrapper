@@ -431,6 +431,9 @@ inline static int new_socket() {
     }
 }
 
+union std_string {
+    char* data;
+};
 
 const char* get_m3u8_method_play(uint8_t leaseMgr[16], unsigned long adam) {
     union std_string HLS = new_std_string_short_mode("HLS");
