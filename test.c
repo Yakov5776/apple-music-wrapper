@@ -436,18 +436,45 @@ const char* get_m3u8_method_play(uint8_t leaseMgr[16], unsigned long adam) {
     union std_string HLS = new_std_string_short_mode("HLS");
     struct std_vector HLSParam = new_std_vector(&HLS);
     static uint8_t z0 = 1;
-    struct shared_ptr *ptr_result = (struct shared_ptr *) malloc(32);
+    struct shared_ptr* ptr_result = (struct shared_ptr*) malloc(sizeof(struct shared_ptr));
+
+    if (!ptr_result) {
+        return NULL; // 分配失败
+    }
+
     _ZN22SVPlaybackLeaseManager12requestAssetERKmRKNSt6__ndk16vectorINS2_12basic_stringIcNS2_11char_traitsIcEENS2_9allocatorIcEEEENS7_IS9_EEEERKb(
-        ptr_result, leaseMgr, &adam, &HLSParam, &z0
-    );
+        ptr_result, leaseMgr, &adam, &HLSParam, &z0);
+
     if (_ZNK23SVPlaybackAssetResponse13hasValidAssetEv(ptr_result->obj)) {
-        struct shared_ptr *playbackAsset = _ZNK23SVPlaybackAssetResponse13playbackAssetEv(ptr_result->obj);
-        union std_string *m3u8 = (union std_string *) malloc(24);
-        _ZNK17storeservicescore13PlaybackAsset9URLStringEv(m3u8, playbackAsset->obj);
-        const char *result = std_string_data(m3u8);
-        free(ptr_result);  // 释放 ptr_result
-        free(m3u8);  // 释放 m3u8
-        return result;
+        struct shared_ptr* playbackAsset = _ZNK23SVPlaybackAssetResponse13playbackAssetEv(ptr_result->obj);
+
+        // 动态分配足够大的内存以确保存储 URL 字符串
+        size_t buffer_size = 1024; // 假设最大 URL 长度为1024字节
+        union std_string* m3u8 = (union std_string*) malloc(buffer_size);
+
+        if (!m3u8) {
+            free(ptr_result);
+            return NULL; // 分配失败
+        }
+
+        // 调用 URLStringEv 函数
+        if (_ZNK17storeservicescore13PlaybackAsset9URLStringEv(m3u8, playbackAsset->obj) != 0) {
+            free(ptr_result);
+            free(m3u8);
+            return NULL; // URLStringEv 失败
+        }
+
+        const char* result = std_string_data(m3u8);
+
+        // 复制结果以确保在返回前不会被释放
+        char* final_result = strdup(result);
+
+        // 释放堆分配的内存
+        free(ptr_result);
+        free(m3u8->data);  // 释放 m3u8 中的字符串数据
+        free(m3u8);
+
+        return final_result; // 返回堆上的数据，由调用者负责释放
     } else {
         free(ptr_result);  // 释放 ptr_result
         return NULL;
