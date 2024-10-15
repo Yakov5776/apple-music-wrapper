@@ -1,5 +1,7 @@
-# wrapper
-All files from anonymous, No need for an Android emulator to decrypt alac
+# apple-music-wrapper
+No need for an Android emulator, this wrapper emulates Apple Music v3.9.1 (x86_64) ([APKMirror](https://www.apkmirror.com/apk/apple/apple-music/apple-music-3-9-1-release/apple-music-3-9-1-2-android-apk-download/))
+
+Credits goes to [zhaarey](https://github.com/zhaarey/) for the majority of the reverse-engineering efforts.
 
 
 ### 安装
